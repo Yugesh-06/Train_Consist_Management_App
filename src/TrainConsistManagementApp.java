@@ -1,11 +1,19 @@
 import java.util.*;
-import java.util.stream.Collectors;
+
+class InvalidCapacityException extends Exception {
+    InvalidCapacityException(String message) {
+        super(message);
+    }
+}
 
 class Bogie {
     String name;
     int capacity;
 
-    Bogie(String name, int capacity) {
+    Bogie(String name, int capacity) throws InvalidCapacityException {
+        if (capacity <= 0) {
+            throw new InvalidCapacityException("Capacity must be greater than zero");
+        }
         this.name = name;
         this.capacity = capacity;
     }
@@ -15,38 +23,17 @@ public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
-        List<Bogie> bogies = new ArrayList<>();
+        try {
 
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("General", 90));
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("General", 100));
+            Bogie b1 = new Bogie("Sleeper", 72);
+            Bogie b2 = new Bogie("AC Chair", 56);
+            Bogie b3 = new Bogie("First Class", -10);
 
-        long startLoop = System.nanoTime();
+            System.out.println("Bogies created successfully");
 
-        List<Bogie> loopResult = new ArrayList<>();
-        for (Bogie b : bogies) {
-            if (b.capacity > 60) {
-                loopResult.add(b);
-            }
+        } catch (InvalidCapacityException e) {
+
+            System.out.println(e.getMessage());
         }
-
-        long endLoop = System.nanoTime();
-        long loopTime = endLoop - startLoop;
-
-        long startStream = System.nanoTime();
-
-        List<Bogie> streamResult = bogies.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
-
-        long endStream = System.nanoTime();
-        long streamTime = endStream - startStream;
-
-        System.out.println("Loop Filtering Time: " + loopTime + " ns");
-        System.out.println("Stream Filtering Time: " + streamTime + " ns");
     }
 }
